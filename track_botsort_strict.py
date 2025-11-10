@@ -5,13 +5,13 @@ from ultralytics import YOLO
 
 BASE   = r"F:\MY PROJECTS\VIDEO"
 MODEL  = os.path.join(BASE, "best_v8l_896.pt")
-VIDEO  = os.path.join(BASE, "signal.mp4")           # <- full video
-OUTCSV = os.path.join(BASE, "traj_botsort_raw.csv") # richer, strict
+VIDEO  = os.path.join(BASE, "signal.mp4")    
+OUTCSV = os.path.join(BASE, "traj_botsort_raw.csv") 
 RUNNAME= "signal_botsort_strict"
 
-# STRICT FILTERS (edit if needed)
-DET_CONF = 0.50        # keep detections only if conf >= this
-MIN_AREA = 32*32       # drop tiny boxes (px^2)
+
+DET_CONF = 0.50        
+MIN_AREA = 32*32       
 IMG_SIZE = 896
 IOU      = 0.5
 
@@ -22,13 +22,7 @@ bytetrack_yaml = os.path.join(trk_dir, "bytetrack.yaml")
 TRACKER = botsort_yaml if os.path.exists(botsort_yaml) else bytetrack_yaml
 print("[INFO] Tracker:", os.path.basename(TRACKER))
 
-# TIP: open botsort.yaml and make thresholds stricter, e.g.:
-# track_high_thresh: 0.65
-# new_track_thresh:  0.55
-# match_thresh:      0.80
-# track_buffer:      60
-# max_age:           60
-# appearance_thresh: 0.25
+
 
 cap = cv2.VideoCapture(VIDEO); assert cap.isOpened(), f"Cannot open {VIDEO}"
 fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
@@ -42,7 +36,7 @@ KEEP = {"person","bicycle","rickshaw","cng","car","van","bus","truck"} & set(m.n
 
 stream = m.track(
     source=VIDEO,
-    imgsz=IMG_SIZE, conf=max(DET_CONF-0.1, 0.25), iou=IOU,   # detector gate (slightly looser than final keep)
+    imgsz=IMG_SIZE, conf=max(DET_CONF-0.1, 0.25), iou=IOU,   
     tracker=TRACKER, persist=True, save=True, name=RUNNAME,
     stream=True
 )
@@ -54,8 +48,7 @@ with open(OUTCSV, "w", newline="") as f:
         "x","y","vx","vy","speed",
         "x1","y1","x2","y2","w","h","area"
     ])
-    last = {}  # tid -> (cx,cy,t)
-
+    last = {}  
     frame_i = 0
     for r in stream:
         frame_i += 1
@@ -77,7 +70,7 @@ with open(OUTCSV, "w", newline="") as f:
             x1,y1,x2,y2 = bb
             w_px = max(0.0, x2-x1); h_px = max(0.0, y2-y1); area = w_px*h_px
             if cf < DET_CONF or area < MIN_AREA:
-                continue  # strict confidence/size gating
+                continue  
 
             cx, cy = (x1+x2)/2.0, (y1+y2)/2.0
             if tid in last:
