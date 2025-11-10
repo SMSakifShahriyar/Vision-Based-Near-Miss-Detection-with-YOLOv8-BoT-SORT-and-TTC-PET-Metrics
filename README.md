@@ -2,13 +2,13 @@
 
 A computer-vision pipeline for near-miss detection and surrogate safety analysis using **YOLOv8** object detection and **BoT-SORT** multi-object tracking.
 
----
+
 
 ##  Overview
 This project estimates **surrogate safety measures** (Time-to-Collision and Post-Encroachment Time) from uncalibrated traffic video.  
 Tracked trajectories are analyzed to identify and classify **near-miss events** between vehicles, pedestrians, and other road users, and summarized per intersection zone.
 
----
+
 
 ##  Methodology
 
@@ -27,7 +27,7 @@ Tracked trajectories are analyzed to identify and classify **near-miss events** 
 - **Spatial Zoning**  
   Each event is tagged to one of five manually defined polygons: **center + four approaches**, allowing per-zone summaries.
 
----
+
 
 ##  Repository Structure
 
@@ -45,7 +45,6 @@ Tracked trajectories are analyzed to identify and classify **near-miss events** 
 | `traj_botsort.csv` | Tracked trajectory data |
 | `conflicts_ttc_pet.csv` | Detected conflict events |
 
----
 
 ## ⚙️ Pipeline Steps
 
