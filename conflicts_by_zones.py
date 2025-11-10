@@ -22,7 +22,7 @@ def tag_zone(x, y):
             return z["label"]
     return "none"
 
-# pick pixel columns (works with both schemas)
+
 xcol = "x_px" if "x_px" in df.columns else "x"
 ycol = "y_px" if "y_px" in df.columns else "y"
 
@@ -30,7 +30,6 @@ df["zone"] = [tag_zone(x, y) for x, y in zip(df[xcol], df[ycol])]
 df.to_csv(OUT_CSV, index=False)
 print("Saved per-event zones ->", OUT_CSV)
 
-# simple summary
 with open(OUT_SUM, "w") as f:
     f.write("Counts by zone:\n")
     for z, c in df["zone"].value_counts().items():
