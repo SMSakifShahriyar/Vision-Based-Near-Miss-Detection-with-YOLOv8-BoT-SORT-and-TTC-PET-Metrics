@@ -1,9 +1,9 @@
-# Robust exporter: stable labels, skip ped-ped, tolerant to fps/length issues
+
 import os, cv2, pandas as pd
 from collections import Counter
 
 BASE   = r"F:\MY PROJECTS\VIDEO"
-# IMPORTANT: use the SAME source video used for tracking/CSV times
+
 VIDEO = r"F:\MY PROJECTS\VIDEO\signal.mp4"    
 TRAJ  = r"F:\MY PROJECTS\VIDEO\traj_botsort_clean.csv" 
 CONF   = os.path.join(BASE, "conflicts_ttc_pet.csv")
@@ -31,7 +31,7 @@ def main():
     if df_cf.empty:
         print("No conflicts to export."); return
 
-    # filter types and drop ped-ped
+
     if "type" in df_cf.columns:
         df_cf = df_cf[df_cf["type"].isin(KEEP_TYPES)]
         if df_cf.empty:
@@ -42,15 +42,15 @@ def main():
     df_tr["frame"] = df_tr["frame"].astype(int)
     if "cls" not in df_tr.columns: df_tr["cls"] = ""
 
-    # stable class per track
+ 
     stable_cls = df_tr.groupby("id")["cls"].apply(stable_label).to_dict()
 
-    # trajectories indexed by (id, frame)
+
     tr_by_id = {int(tid): g[["frame", xcol, ycol]].drop_duplicates("frame")
                            .set_index("frame").sort_index()
                 for tid, g in df_tr.groupby("id")}
 
-    # top-N by severity
+   
     df_cf["severity"] = df_cf[["ttc_s","pet_s"]].min(axis=1)
     top = df_cf.sort_values("severity").head(MAX_N).reset_index(drop=True)
 
@@ -67,11 +67,10 @@ def main():
         la, lb = stable_cls.get(id_a, ""), stable_cls.get(id_b, "")
         t_event = float(r["t"])
 
-        # frame window (no clamping to total length)
         f0 = max(int(round((t_event - PRE_S) * fps)), 0)
         f1 = max(int(round((t_event + POST_S) * fps)), f0 + 1)
 
-        # set up writer
+
         out_name = f"ev_{i:02d}_{r['type']}_t{t_event:.2f}_ttc{r['ttc_s']:.2f}_pet{r['pet_s']:.2f}.mp4"
         out_path = os.path.join(OUTDIR, out_name)
         writer = cv2.VideoWriter(out_path, cv2.VideoWriter_fourcc(*"mp4v"), fps, (W, H))
@@ -101,7 +100,7 @@ def main():
             draw_track(id_a, la, (0,0,255), trail_a)  # red
             draw_track(id_b, lb, (255,0,0), trail_b)  # blue
 
-            # header
+       
             cv2.rectangle(frame, (0,0), (W, 40), (0,0,0), -1)
             txt = f"Event {i+1}/{len(top)} {r['type']}  t={t_event:.2f}s  TTC={r['ttc_s']:.2f}s  PET={r['pet_s']:.2f}s  pair:{id_a}-{id_b}"
             cv2.putText(frame, txt, (10,27), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255,255,255), 2, cv2.LINE_AA)
@@ -115,7 +114,7 @@ def main():
             saved += 1
         else:
             print(f"Skipped event {i} (no frames read at window {f0}-{f1}).")
-            # remove empty file if created
+         
             try:
                 if os.path.exists(out_path) and os.path.getsize(out_path) == 0:
                     os.remove(out_path)
