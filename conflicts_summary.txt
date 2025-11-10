@@ -1,0 +1,8 @@
+TTC_thresh=1.2s, PET_thresh=0.8s, lookahead=6.0s, d_gate_px=70.0px, cooldown=3.0s
+Total serious conflicts (merged): 35
+By type:
+  veh-veh: 16
+  veh-ped: 13
+  veh-nmv: 6
+Duration observed: 383.0s (~6.38 min)
+Conflicts per minute: 5.48

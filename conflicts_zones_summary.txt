@@ -1,0 +1,15 @@
+Counts by zone:
+  Approach (North): 22
+  center: 8
+  none: 2
+  Approach (East): 2
+  Approach (West): 1
+
+Counts by zone × type:
+type              veh-nmv  veh-ped  veh-veh
+zone                                       
+Approach (East)         0        2        0
+Approach (North)        3        7       12
+Approach (West)         0        1        0
+center                  2        3        3
+none                    1        0        1
