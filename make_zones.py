@@ -17,12 +17,12 @@ print("  - 's' to SAVE and exit.")
 
 def redraw():
     d = img.copy()
-    # draw finished zones
+
     for z in zones:
         pts = np.array(z["pts"], np.int32)
         cv2.polylines(d, [pts], True, (0,255,0), 2)
         cv2.putText(d, z["label"], tuple(pts[0]), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0,255,0), 2)
-    # draw current
+  
     if current:
         pts = np.array(current, np.int32)
         cv2.polylines(d, [pts], False, (0,0,255), 2)
@@ -56,7 +56,7 @@ while True:
         else:
             print("Add at least 3 points before 'n'.")
     elif k == ord('s'):
-        # save current if valid
+  
         if len(current) >= 3:
             zones.append({"label": label, "pts": current.copy()})
         with open(OUT, "w") as f:
