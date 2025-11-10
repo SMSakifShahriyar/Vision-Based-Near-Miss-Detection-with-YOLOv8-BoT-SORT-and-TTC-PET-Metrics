@@ -6,31 +6,30 @@ import ultralytics
 from ultralytics import YOLO
 
 def main():
-    # --- paths ---
+
     BASE   = r"F:\MY PROJECTS\VIDEO"
     MODEL  = os.path.join(BASE, "best_v8l_896.pt")
-    VIDEO  = os.path.join(BASE, "signal.mp4")     # change to "signal.mp4" for full run
+    VIDEO  = os.path.join(BASE, "signal.mp4")    
     OUTCSV = os.path.join(BASE, "traj_botsort.csv")
 
-    # --- choose tracker yaml (prefer BoT-SORT, else ByteTrack) ---
+
     trk_dir = os.path.join(os.path.dirname(ultralytics.__file__), "cfg", "trackers")
     botsort_yaml   = os.path.join(trk_dir, "botsort.yaml")
     bytetrack_yaml = os.path.join(trk_dir, "bytetrack.yaml")
     TRACKER_YAML = botsort_yaml if os.path.exists(botsort_yaml) else bytetrack_yaml
     print(f"[INFO] Using tracker: {os.path.basename(TRACKER_YAML)}")
 
-    # --- video fps for timestamps ---
+
     cap = cv2.VideoCapture(VIDEO)
     assert cap.isOpened(), f"Cannot open video: {VIDEO}"
     fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
     cap.release()
     print(f"[INFO] FPS: {fps}")
 
-    # --- load model ---
+   
     m = YOLO(MODEL)
 
-    # --- classes: EXACT names from your model ---
-    # {0:'person',1:'bicycle',2:'rickshaw',3:'cng',4:'car',5:'van',6:'bus',7:'truck'}
+
     WANT = {"person","bicycle","rickshaw","cng","car","van","bus","truck"}
     MODEL_NAMES = set(m.names.values())
     KEEP = WANT & MODEL_NAMES
@@ -38,7 +37,7 @@ def main():
         KEEP = MODEL_NAMES  # fallback
     print(f"[INFO] Keeping classes: {sorted(KEEP)}")
 
-    # --- run tracking as a generator (prevents RAM buildup) ---
+
     stream = m.track(
         source=VIDEO,
         imgsz=896, conf=0.25, iou=0.5,
@@ -47,11 +46,11 @@ def main():
         stream=True
     )
 
-    # --- write trajectories ---
+   
     with open(OUTCSV, "w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["id","cls","frame","t","x","y","vx","vy","speed"])
-        last = {}   # id -> (cx, cy, t)
+        last = {}   
         frame_i = 0
 
         for r in stream:
