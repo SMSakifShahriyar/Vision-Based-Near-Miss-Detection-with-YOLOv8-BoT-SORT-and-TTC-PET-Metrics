@@ -1,4 +1,4 @@
-# overlay_zones_on_video.py
+
 import os
 import re
 import json
@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pandas as pd
 
-# ========== SETTINGS ==========
+
 BASE      = r"F:\MY PROJECTS\VIDEO"
 CLIP      = os.path.join(BASE, r"conflict_clips_marked\ev_06_veh-ped_t184.68_ttc1000000000.00_pet0.00.mp4")
 ZONESJ    = os.path.join(BASE, "zones.json")
@@ -15,20 +15,20 @@ OUT       = os.path.join(BASE, "cover_ev06_overlay.mp4")
 
 TITLE     = "Surrogate Safety at Urban Intersection (Panthapath Signal)"
 SUB       = "TTC/PET near-miss detection - YOLOv8 + BoT-SORT"  # ASCII only
-OBS_SECONDS = 386  # total observation time to display and use for the rate
+OBS_SECONDS = 386 
 
-# Panel style (bottom-left, clearer)
-PANEL_POS   = "BL"     # 'TL', 'TR', 'BL', 'BR'
+
+PANEL_POS   = "BL"   
 FONT_SCALE  = 0.9
 TEXT_THICK  = 2
 OUTLINE_THK = 4
 PANEL_OPA   = 0.80
 PANEL_PAD   = 14
 
-# Zones overlay
+
 ALPHA_ZONES = 0.28
 LINE_THICK  = 2
-# ==============================
+
 
 
 def load_counts(conf_csv):
@@ -153,7 +153,7 @@ def main():
         cap.release()
         raise RuntimeError(f"Cannot open output writer for: {OUT}")
 
-    # -------- Build panel text (no PET/TTC shown) --------
+  
     lines = [TITLE, SUB, f"Observation time: {OBS_SECONDS}s"]
 
     if evt:
@@ -171,7 +171,7 @@ def main():
                 lines += ["Top zones: " + "  ".join([f"{k}:{v}" for k, v in topz])]
     else:
         lines += ["(No global summary available)"]
-    # -----------------------------------------------------
+ 
 
     try:
         while True:
@@ -179,14 +179,14 @@ def main():
             if not ok:
                 break
 
-            # zones overlay
+
             draw_translucent_polys(frame, zones, colors, alpha=ALPHA_ZONES, edge=LINE_THICK)
 
-            # zone labels
+    
             for z in zones:
                 put_label_at_poly_start(frame, z["label"], z["pts"], color=(255, 255, 255), bg=(0, 0, 0))
 
-            # info panel (bottom-left)
+
             put_panel(
                 frame,
                 lines,
